@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 public class WorldGrid : MonoBehaviour {
@@ -14,9 +15,9 @@ public class WorldGrid : MonoBehaviour {
     private Vector3[] vertices;
     public Material material;
     public List<Station> stationList;
-    List<Vector3[]> trainLines;
+    List<List<Vector3>> trainLines;
     List<int> stationsOnLine;
-
+    Color[] LineColour;
     Station StartStation;
     Station EndStation;
 
@@ -24,7 +25,7 @@ public class WorldGrid : MonoBehaviour {
     // Use this for initialization
     void Start ()
     { 
-        trainLines = new List<Vector3[]>();
+        trainLines = new List<List<Vector3>>();
         stationList = new List<Station>();
         stationsOnLine = new List<int>();
         maxStationLines = FindMax();
@@ -33,6 +34,10 @@ public class WorldGrid : MonoBehaviour {
 
         InitGrid();
         AssignStartEnd();
+        LineColour = new Color[lineNum];
+        SetColour();
+        PlaceLineBlocks();
+
 
     }
 	int FindMax()
@@ -98,6 +103,7 @@ public class WorldGrid : MonoBehaviour {
 
             newStation.position = GridToPosition(newStation.gridX, newStation.gridY);
             stationObject.transform.position = newStation.position;
+            stationObject.name = "x: " + stationObject.transform.position.x + " " + "y: " + stationObject.transform.position.z;
             newStation.stationObject = stationObject;
             stationList.Add(newStation);
             trainGrid[newStation.gridX, newStation.gridY] = 1;
@@ -106,15 +112,15 @@ public class WorldGrid : MonoBehaviour {
 
 
     }
-    Vector3[] MakeLine()
+    List<Vector3> MakeLine()
     {
-        Vector3[] newLine = new Vector3[stationsPerLine];
+        List<Vector3> newLine = new List<Vector3>();
         for (int i = 0; i < stationsPerLine-1; i++)
         {
             int randStationNum = Random.Range(0, stationNum);
             if (maxStationLines > stationList[randStationNum].linesConnected)
             {
-                newLine[i] = stationList[randStationNum].position;
+                newLine.Add(stationList[randStationNum].position);
                 stationList[randStationNum].linesConnected++;
                 //Debug.Log(stationList[randStationNum].position);
             }
@@ -124,13 +130,13 @@ public class WorldGrid : MonoBehaviour {
                 {
                     randStationNum = Random.Range(0, stationNum);
                 }
-                newLine[i] = stationList[randStationNum].position;
+                newLine.Add(stationList[randStationNum].position);
                 stationList[randStationNum].linesConnected++;
             }
 
 
         }
-        newLine[stationsPerLine-1] = newLine[0];
+        newLine.Add(newLine[0]);
         return newLine;
     }
 
@@ -148,7 +154,7 @@ public class WorldGrid : MonoBehaviour {
         }
     }
 
-    Vector3[] GetClosestStation(Station currentStation)
+    List<Vector3> GetClosestStation(Station currentStation)
     {
         List<Vector3> newLine = new List<Vector3>();
         Station[] sMin = new Station[stationsPerLine];
@@ -160,8 +166,8 @@ public class WorldGrid : MonoBehaviour {
         }
         Vector3 currentPos = currentStation.stationObject.transform.position;
         newLine.Add(currentPos);
-        Debug.Log(newLine[0]);
-        for (int i = 1; i < stationsPerLine-1; i++)
+        //Debug.Log(newLine[0]);
+        for (int i = 1; i < stationsPerLine; i++)
         {
             foreach (Station s in stationList)
             {
@@ -173,23 +179,45 @@ public class WorldGrid : MonoBehaviour {
                 }
             }
             newLine.Add(sMin[i].stationObject.transform.position);
-            Debug.Log(newLine[i]);
+            //Debug.Log(newLine[i]);
         }
+        newLine[newLine.Count-1] = newLine[0];
 
 
-
-        return newLine.ToArray();
+        return newLine;
     }
 
     void AssignStartEnd()
     {
         StartStation = stationList[Random.Range(0, stationList.Count)];
-        
+        Vector3 currentPos = StartStation.stationObject.transform.position;
+        Station sMax = new Station();
+        float maxDist = 0;
+
+
+        foreach (Station s in stationList)
+        {
+            foreach (List<Vector3> l in trainLines)
+            {
+                if (!(l.Contains(s.stationObject.transform.position)&& l.Contains(currentPos)))
+                {
+                    float dist = Vector3.Distance(s.stationObject.transform.position, currentPos);
+                    if (dist > maxDist)
+                    {
+                        sMax = s;
+                        maxDist = dist;
+                    }
+                }
+            }
+        }
+        EndStation = sMax;
+        Debug.Log(StartStation.position);
+        Debug.Log(EndStation.position);
     }
         
     Vector3 GridToPosition(int x, int y)
     {
-        return new Vector3(-mapSize / 2 + x - (mapSize + 1) + 0.5f, 0, -mapSize / 2 + y + 0.5f);
+        return new Vector3(-mapSize / 2 + x + 0.5f, 0, -mapSize / 2 + y + 0.5f);
     }
 
 
@@ -198,33 +226,74 @@ public class WorldGrid : MonoBehaviour {
     {
         if (trainGrid != null)
         {
-            for (int y = 0; y < mapSize; y++)
+            //for (int y = 0; y < mapSize; y++)
+            //{
+            //    for (int x = 0; x < mapSize; x++)
+            //    {
+            //        if (trainGrid[x, y] == 1)
+            //        {
+            //            Gizmos.color = Color.red;
+            //        }
+            //        else
+            //        {
+            //            Gizmos.color = Color.black;
+            //        }
+            //        Gizmos.DrawCube(new Vector3(x, 3, y), Vector3.one);
+            //    }
+            //}
+            if (trainLines != null)
             {
-                for (int x = 0; x < mapSize; x++)
+                Gizmos.color = Color.green;
+                for (int l = 0; l < lineNum; l++)
                 {
-                    if (trainGrid[x, y] == 1)
+                    Gizmos.color = LineColour[l];
+                    for (int i = 0; i < stationsPerLine - 1; i++)
                     {
-                        Gizmos.color = Color.red;
+
+                        //Gizmos.DrawCube(new Vector3(trainLines[l][i].x, 3, trainLines[l][i].z), Vector3.one);
+                        Gizmos.DrawLine(trainLines[l][i], trainLines[l][i + 1]);
+
                     }
-                    else
-                    {
-                        Gizmos.color = Color.black;
-                    }
-                    Gizmos.DrawCube(new Vector3(x, 3, y), Vector3.one);
                 }
             }
         }
-        Gizmos.color = Color.green;
-        for (int l = 0; l < lineNum; l++)
-        {
-            for (int i = 0; i < stationsPerLine-1; i++)
-            {
-                Gizmos.DrawCube(new Vector3(trainLines[l][i].x, 3, trainLines[l][i].z), Vector3.one);
-                Gizmos.DrawLine(trainLines[l][i], trainLines[l][i + 1]);
-
-            }
-        }
-
+      
 
     }
+
+    void SetColour()
+    {
+        for(int i = 0; i < lineNum; i++)
+        {
+            LineColour[i] = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1);
+        }
+    }
+
+    void PlaceLineBlocks()
+    {
+        for (int i = 0; i < trainLines.Count; i++)
+        {
+            for (int j = 0; j < trainLines[i].Count; j++)
+            {
+                int offset = 0;
+                for (int k = 0; k < stationList.Count; k++)
+                {
+                    if (trainLines[i].Contains(stationList[k].position))
+                    {
+                        GameObject lineBlock = new GameObject();
+                        lineBlock.AddComponent<MeshFilter>();
+                        lineBlock.AddComponent<MeshRenderer>();
+                        lineBlock.GetComponent<MeshFilter>().mesh = mesh;
+                        lineBlock.transform.localScale.Set(0.3f, 0.3f, 0.3f);
+                        Renderer rend = lineBlock.GetComponent<Renderer>();
+                        rend.material.color = LineColour[i];
+
+                        lineBlock.transform.position = new Vector3(stationList[k].position.x + offset - stationList[k].linesConnected, 3, stationList[k].position.z);
+                        offset++;
+                    }
+                }
+            }
+        }     
+    }
+
 }

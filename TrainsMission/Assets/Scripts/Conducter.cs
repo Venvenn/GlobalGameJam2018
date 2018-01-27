@@ -5,15 +5,18 @@ using UnityEngine;
 public class Conducter : MonoBehaviour
 {
     public int lineNum = 1;
-    public int stationsPerLine = 2;
+    public int stationsPerLine = 4;
     WorldGrid gridScript;
-    List<TrainLine> trainLines; 
+    List<Vector3[]> trainLines; 
 	// Use this for initialization
 	void Start ()
     {
         gridScript = GameObject.Find("TrainGrid").GetComponent<WorldGrid>();
-        trainLines = new List<TrainLine>();
-        trainLines.Add(MakeLine());
+        trainLines = new List<Vector3[]>();
+        for (int i = 0; i < lineNum; i++)
+        {
+            trainLines.Add(MakeLine());
+        }
 
     }
 
@@ -23,19 +26,17 @@ public class Conducter : MonoBehaviour
 
     }
 
-    TrainLine MakeLine()
+    Vector3[] MakeLine()
     {
-        TrainLine newLine = new TrainLine();
-        Station prevStation = new Station();
+        Vector3[] newLine = new Vector3[stationsPerLine];
         Debug.Log("hit");
         for (int i = 0; i < stationsPerLine; i++)
         {
-            int randStationNum = Random.Range(0, gridScript.stationList.Count);
-            newLine.lineStatons.Add(gridScript.stationList[randStationNum]);
-            newLine.lineStatons[i].nextStation = prevStation;
-            prevStation = newLine.lineStatons[randStationNum];
+            int randStationNum = Random.Range(0, gridScript.stationNum);
+            Debug.Log(randStationNum);
+            newLine[i] = gridScript.stationList[randStationNum].position;
+
         }
-        newLine.lineStatons[0].nextStation = newLine.lineStatons[newLine.lineStatons.Count];
         return newLine;
     }
 
@@ -45,10 +46,11 @@ public class Conducter : MonoBehaviour
         {
             for(int i = 0; i < lineNum; i++)
             {
-                for (int j = 0; j < stationsPerLine; j++)
+                for (int j = 0; j < stationsPerLine-1; j++)
                 {
                     Gizmos.color = Color.green;
-                    Gizmos.DrawLine(trainLines[i].lineStatons[j].position, trainLines[i].lineStatons[j].nextStation.position);
+                    Gizmos.DrawLine(trainLines[i][j], trainLines[i][j + 1]);
+                    Debug.Log(trainLines[i][j]);
                 }
             }
         }

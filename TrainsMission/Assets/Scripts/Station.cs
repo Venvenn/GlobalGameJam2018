@@ -9,6 +9,7 @@ public class Station
     public Station nextStation;
     public int gridX;
     public int gridY;
+    public int linesConnected;
 	// Use this for initialization
 	void Start ()
     {

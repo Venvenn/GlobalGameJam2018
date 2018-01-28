@@ -8,7 +8,9 @@ public class Player : MonoBehaviour
     List<GameObject> trainsList;
     GameObject[] trainArray;
     GameObject trainOn;
+    public GameObject winText;
     bool onTrain;
+    bool win = false;
 
     // Use this for initialization
     void Start()
@@ -55,7 +57,9 @@ public class Player : MonoBehaviour
         {
             if (Vector3.Distance(transform.position, t.transform.position) < 2)
             {
+
                 transform.parent = t.transform;
+                transform.position = t.transform.position;
                 Debug.Log("hit train");
                 onTrain = true;
             }
@@ -69,9 +73,15 @@ public class Player : MonoBehaviour
             if (Vector3.Distance(transform.position, s) < 2)
             {
                 transform.parent = null;
-                transform.position = s;
+                transform.position = s + Vector3.one/2;
                 Debug.Log("hit station");
                 onTrain = false;
+                if (s == gridScript.EndStation.position)
+                {
+                    win = true;
+                    winText.GetComponent<GUIText>().color = new Color(winText.GetComponent<GUIText>().color.r, winText.GetComponent<GUIText>().color.b, winText.GetComponent<GUIText>().color.g, 255);
+                    Debug.Log("win");
+                }
             }
         }
     }

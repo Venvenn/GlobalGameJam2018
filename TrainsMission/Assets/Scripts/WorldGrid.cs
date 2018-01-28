@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.UI;
 using UnityEngine;
 
 public class WorldGrid : MonoBehaviour {
@@ -13,6 +13,7 @@ public class WorldGrid : MonoBehaviour {
     public int maxStationLines;
     public Mesh mesh;
     public Transform Train;
+    public GameObject destinationText;
     public Transform[] Station;
     public Transform Track;
     List<GameObject> tracks;
@@ -24,10 +25,10 @@ public class WorldGrid : MonoBehaviour {
     public List<List<Vector3>> trainLines;
     List<int> stationsOnLine;
     Color[] LineColour;
-    Station StartStation;
-    Station EndStation;
+    public Station StartStation;
+    public Station EndStation;
     GameObject[] minimapSphere;
-
+    public Camera MainCamera;
 
 
 
@@ -110,7 +111,8 @@ public class WorldGrid : MonoBehaviour {
             stationObject.AddComponent<MeshRenderer>();
             stationObject.transform.parent = gameObject.transform;
             stationText.AddComponent<MeshRenderer>();
-            stationText.AddComponent<TextMesh>(); ;
+            stationText.AddComponent<TextMesh>();
+            stationText.transform.localScale.Set(0.01f, 0.01f, 0.01f);
             stationText.transform.parent = stationObject.transform;
 
 
@@ -120,11 +122,14 @@ public class WorldGrid : MonoBehaviour {
             Debug.Log(newStation.nameGenerator.stationNames.Count);
 
             newStation.position = GridToPosition(newStation.gridX, newStation.gridY);
-            stationObject.transform.position = newStation.position;// + (Vector3.left*2) + Vector3.forward;
-            Instantiate(Station[Random.Range(0,2)], stationObject.transform.position, Station[0].transform.rotation, stationObject.transform);
+            stationObject.transform.position = newStation.position; //(Vector3.left*2) + Vector3.forward;
+            Instantiate(Station[Random.Range(0,3)], stationObject.transform.position, Station[0].transform.rotation, stationObject.transform);
             stationObject.name = newStation.stationName;
             stationText.GetComponent<TextMesh>().text = stationObject.name;
             stationText.GetComponent<TextMesh>().alignment = TextAlignment.Center;
+
+            stationText.GetComponent<TextMesh>().fontSize = 8;
+
             newStation.stationObject = stationObject;
             stationList.Add(newStation);
             trainGrid[newStation.gridX, newStation.gridY] = 1;
@@ -193,7 +198,7 @@ public class WorldGrid : MonoBehaviour {
         GameObject track = new GameObject();
         track.name = "track";
         track.AddComponent<SplineDecorater>();
-        track.GetComponent<SplineDecorater>().frequency = 2000;
+        track.GetComponent<SplineDecorater>().frequency = 1000;
         track.GetComponent<SplineDecorater>().spline = splineScript[trainLines.Count - 1];
         track.GetComponent<SplineDecorater>().items = new Transform[1];
         track.layer = 9;
@@ -276,7 +281,7 @@ public class WorldGrid : MonoBehaviour {
     void AssignStartEnd()
     {
         StartStation = stationList[Random.Range(0, stationList.Count)];
-        Vector3 currentPos = StartStation.stationObject.transform.position;
+        Vector3 currentPos = StartStation.position;
         Station sMax = new Station();
         float maxDist = 0;
 
@@ -296,10 +301,11 @@ public class WorldGrid : MonoBehaviour {
                 }
             }
         }
-        Player.transform.position = currentPos;
+        Player.transform.position = currentPos + (Vector3.one / 2);
+        //MainCamera.transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, MainCamera.transform.position.z);
         EndStation = sMax;
-        Debug.Log(StartStation.position);
-        Debug.Log(EndStation.position);
+        destinationText.GetComponent<GUIText>().text = EndStation.stationName;
+
     }
         
     Vector3 GridToPosition(int x, int y)
@@ -408,6 +414,17 @@ public class WorldGrid : MonoBehaviour {
             tracks[i].layer = 9;
             tracks[i].GetComponent<SplineDecorater>().items[0] = tTransfrom.transform;
             tracks[i].GetComponent<SplineDecorater>().items[0].GetComponent<MeshRenderer>().material.color = LineColour[i];
+
+
+
+            float emission = Mathf.PingPong(Time.time, 1.0f);
+            Color baseColor = Color.yellow; //Replace this with whatever you want for your base color at emission level '1'
+
+            Color finalColor =LineColour[i] * Mathf.LinearToGammaSpace(emission);
+
+            tracks[i].GetComponent<SplineDecorater>().items[0].GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", finalColor);
+
+
 
 
         }

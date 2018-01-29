@@ -1,31 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     WorldGrid gridScript;
     List<GameObject> trainsList;
     GameObject[] trainArray;
     GameObject trainOn;
+    Light playerLight;
     public GameObject winText;
     bool onTrain;
     bool win = false;
+
+    private void Awake()
+    {
+        winText.SetActive(false);
+    }
 
     // Use this for initialization
     void Start()
     {
         gridScript = GameObject.Find("TrainGrid").GetComponent<WorldGrid>();
         trainsList = new List<GameObject>();
+        playerLight = transform.Find("PlayerSpotlight").GetComponent<Light>();
 
     }
     public void Init()
     {
-        for (int i = 0; i < GameObject.Find("Trains").transform.childCount; i++)
-        {
-            Debug.Log("hit");
-            trainsList.Add(GameObject.Find("Trains").transform.GetChild(i).gameObject);
-        }
+
+            for (int i = 0; i < GameObject.Find("Trains").transform.childCount; i++)
+            {
+                Debug.Log("hit");
+                trainsList.Add(GameObject.Find("Trains").transform.GetChild(i).gameObject);
+            }
+       
     }
         // Update is called once per frame
     void Update()
@@ -58,8 +67,10 @@ public class Player : MonoBehaviour
             if (Vector3.Distance(transform.position, t.transform.position) < 2)
             {
 
+                playerLight.intensity = 2;
+                playerLight.spotAngle = 80;
                 transform.parent = t.transform;
-                transform.position = t.transform.position;
+                transform.position = t.transform.position + (Vector3.up/3);
                 Debug.Log("hit train");
                 onTrain = true;
             }
@@ -74,12 +85,14 @@ public class Player : MonoBehaviour
             {
                 transform.parent = null;
                 transform.position = s + Vector3.one/2;
+                playerLight.intensity = 1;
+                playerLight.spotAngle = 30;
                 Debug.Log("hit station");
                 onTrain = false;
                 if (s == gridScript.EndStation.position)
                 {
                     win = true;
-                    winText.GetComponent<GUIText>().color = new Color(winText.GetComponent<GUIText>().color.r, winText.GetComponent<GUIText>().color.b, winText.GetComponent<GUIText>().color.g, 255);
+                    winText.SetActive(win);                 
                     Debug.Log("win");
                 }
             }

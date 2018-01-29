@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 140949816}
   - component: {fileID: 140949819}
   - component: {fileID: 140949820}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Exit Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -466,7 +466,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -642,7 +642,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -675,7 +675,7 @@ GameObject:
   - component: {fileID: 606840979}
   - component: {fileID: 606840982}
   - component: {fileID: 606840983}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Start Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -820,7 +820,7 @@ GameObject:
   - component: {fileID: 872308099}
   - component: {fileID: 872308101}
   - component: {fileID: 872308100}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -894,7 +894,7 @@ GameObject:
   - component: {fileID: 1074140958}
   - component: {fileID: 1074140960}
   - component: {fileID: 1074140959}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1057,7 +1057,7 @@ GameObject:
   - component: {fileID: 1524672073}
   - component: {fileID: 1524672075}
   - component: {fileID: 1524672074}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1243,7 +1243,7 @@ GameObject:
   - component: {fileID: 1731533819}
   - component: {fileID: 1731533820}
   - component: {fileID: 1731533821}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Buttons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1367,7 +1367,7 @@ GameObject:
   - component: {fileID: 1908085857}
   - component: {fileID: 1908085856}
   - component: {fileID: 1908085859}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Start Button Cover
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1501,7 +1501,7 @@ GameObject:
   - component: {fileID: 2047262790}
   - component: {fileID: 2047262789}
   - component: {fileID: 2047262792}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Exit Button Cover
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1633,7 +1633,7 @@ GameObject:
   - component: {fileID: 2080823902}
   - component: {fileID: 2080823904}
   - component: {fileID: 2080823903}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}

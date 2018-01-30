@@ -58,6 +58,8 @@ public class WorldGrid : MonoBehaviour {
 
 
     }
+
+
 	int FindMax()
     {
         int max = 0;
@@ -112,31 +114,50 @@ public class WorldGrid : MonoBehaviour {
             stationObject.transform.parent = gameObject.transform;
             stationText.AddComponent<MeshRenderer>();
             stationText.AddComponent<TextMesh>();
-            stationText.transform.localScale.Set(0.01f, 0.01f, 0.01f);
             stationText.transform.parent = stationObject.transform;
-
 
             newStation.gridX = Random.Range(0, mapSize);
             newStation.gridY = Random.Range(0, mapSize);
-            newStation.Generate();
-            Debug.Log(newStation.nameGenerator.stationNames.Count);
-
             newStation.position = GridToPosition(newStation.gridX, newStation.gridY);
-            stationObject.transform.position = newStation.position; //(Vector3.left*2) + Vector3.forward;
-            Instantiate(Station[Random.Range(0,3)], stationObject.transform.position, Station[0].transform.rotation, stationObject.transform);
+            newStation.Generate();
+
+            for (int j = 0; j < stationList.Count; j++)
+            {
+                if (Vector3.Distance(newStation.position, stationList[j].position) < 5 )
+                {
+                    Debug.Log("1: " + Vector3.Distance(newStation.position, stationList[j].position));
+                    newStation.gridX = Random.Range(0, mapSize);
+                    newStation.gridY = Random.Range(0, mapSize);
+                    newStation.position = GridToPosition(newStation.gridX, newStation.gridY);
+                    j = 0;
+                    Debug.Log("2: " + Vector3.Distance(newStation.position, stationList[j].position));
+                }
+                if(newStation.stationName == stationList[j].stationName)
+                {
+                    newStation.Generate();
+                    j = 0;
+                }
+            }
+
+            
+            stationObject.transform.position = newStation.position; 
             stationObject.name = newStation.stationName;
+
             stationText.GetComponent<TextMesh>().text = stationObject.name;
             stationText.GetComponent<TextMesh>().alignment = TextAlignment.Center;
-
-            stationText.GetComponent<TextMesh>().fontSize = 8;
+            stationText.GetComponent<TextMesh>().fontSize = 40;
+            stationText.transform.localScale = new Vector3(stationText.transform.localScale.x / 10, stationText.transform.localScale.y/10, stationText.transform.localScale.z / 10);
+            stationText.transform.localPosition = new Vector3(stationText.transform.localPosition.x - 1.44f, stationText.transform.localPosition.y + 1.9f, stationText.transform.localPosition.z - 0.41f);          
+            stationText.transform.Rotate(0, -50, 0);
+            stationText.tag = "StationText";
 
             newStation.stationObject = stationObject;
             stationList.Add(newStation);
             trainGrid[newStation.gridX, newStation.gridY] = 1;
 
+            Instantiate(Station[Random.Range(0, 3)], stationObject.transform.position, Station[0].transform.rotation, stationObject.transform);
+
         }
-
-
     }
     List<Vector3> MakeLine()
     {
@@ -221,22 +242,7 @@ public class WorldGrid : MonoBehaviour {
         }
 
         splineScript[trainLines.Count - 1].Loop = true;
-        //splineScript.SetControlPoint(3, trainLines[4][1]);
-        //splineScript.AddCurve();
-        //splineScript.SetControlPoint(6, trainLines[4][2]);
-        //splineScript.AddCurve();
-        //splineScript.SetControlPoint(9, trainLines[4][3]);
 
-
-        //splineLine.transform.position = trainLines[trainLines.Count-1][0];
-        //splineScript.SetControlPoint(0, trainLines[trainLines.Count-1][0]);
-        //for (int i = 1; i < trainLines[trainLines.Count-1].Count; i++)
-        //{
-
-        //    Debug.Log(splineScript.ControlPointCount);
-        //    splineScript.SetControlPoint(splineScript.ControlPointCount - 3, trainLines[trainLines.Count-1][i]);
-        //    splineScript.AddCurve();
-        //}
     }
     void CheckUnConnected()
     {
@@ -431,12 +437,6 @@ public class WorldGrid : MonoBehaviour {
 
             tracks[i].GetComponent<SplineDecorater>().items[0].GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", finalColor);
         }
-    }
-
-    public void GenerateNames()
-    {
-
-
     }
 
 }

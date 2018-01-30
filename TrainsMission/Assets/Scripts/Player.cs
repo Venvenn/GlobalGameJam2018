@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 public class Player : MonoBehaviour
@@ -12,7 +13,11 @@ public class Player : MonoBehaviour
     public GameObject winText;
     bool onTrain;
     bool win = false;
+    static bool record;
+    static float currentTime;
+    static float bestTime = 0;
 
+    //hide win text
     private void Awake()
     {
         winText.SetActive(false);
@@ -21,6 +26,10 @@ public class Player : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        //reset time
+        currentTime = 0.0f;
+        record = true;
+        //init variables
         gridScript = GameObject.Find("TrainGrid").GetComponent<WorldGrid>();
         trainsList = new List<GameObject>();
         playerLight = transform.Find("PlayerSpotlight").GetComponent<Light>();
@@ -28,17 +37,24 @@ public class Player : MonoBehaviour
     }
     public void Init()
     {
+        //turn on timer
 
-            for (int i = 0; i < GameObject.Find("Trains").transform.childCount; i++)
-            {
-                Debug.Log("hit");
-                trainsList.Add(GameObject.Find("Trains").transform.GetChild(i).gameObject);
-            }
+
+        //fill train list with trains in scene
+        for (int i = 0; i < GameObject.Find("Trains").transform.childCount; i++)
+        {
+            trainsList.Add(GameObject.Find("Trains").transform.GetChild(i).gameObject);
+        }
        
     }
         // Update is called once per frame
     void Update()
     {
+
+        if (record)
+        {
+            currentTime += 1 * Time.deltaTime;
+        }
 
         if (!onTrain)
         {
@@ -71,7 +87,6 @@ public class Player : MonoBehaviour
                 playerLight.spotAngle = 80;
                 transform.parent = t.transform;
                 transform.position = t.transform.position + (Vector3.up/3);
-                Debug.Log("hit train");
                 onTrain = true;
             }
             Debug.Log(Vector3.Distance(transform.position, t.transform.position));
@@ -87,15 +102,27 @@ public class Player : MonoBehaviour
                 transform.position = s + Vector3.one/2;
                 playerLight.intensity = 1;
                 playerLight.spotAngle = 30;
-                Debug.Log("hit station");
                 onTrain = false;
                 if (s == gridScript.EndStation.position)
                 {
+                    
                     win = true;
-                    winText.SetActive(win);                 
-                    Debug.Log("win");
+                    winText.GetComponent<Text>().text = "You Got Clarence to thier Stop in: " + Math.Round((double)currentTime,2) + " Seconds";
+                    winText.SetActive(win);
+                    StopRecord(true);
                 }
             }
+        }
+    }
+
+    //pause timer or save high score
+    static void StopRecord(bool checkBestTime)
+    {
+        record = false;
+        if (checkBestTime && currentTime < bestTime)
+        {
+            bestTime = currentTime;
+            PlayerPrefs.SetFloat("Best Time", bestTime);
         }
     }
 

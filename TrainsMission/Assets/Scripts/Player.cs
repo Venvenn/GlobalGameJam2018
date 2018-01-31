@@ -11,12 +11,13 @@ public class Player : MonoBehaviour
     GameObject trainOn;
     Light playerLight;
     public GameObject winText;
+    public GameObject timeText;
     bool onTrain;
     bool win = false;
     static bool record;
     static float currentTime;
     static float bestTime = 0;
-
+    int scoreTime;
     //hide win text
     private void Awake()
     {
@@ -55,6 +56,36 @@ public class Player : MonoBehaviour
         {
             currentTime += 1 * Time.deltaTime;
         }
+
+
+        string mili = currentTime.ToString();
+
+        if (currentTime < 100)
+        {
+            if (currentTime >= 10)
+            {           
+                timeText.GetComponent<Text>().text = "00:" + mili[0] + mili[1] + ":" + mili[3] + mili[4];
+            }
+            else
+            {
+                timeText.GetComponent<Text>().text = "00:" + "0" + mili[0] + ":" + mili[2] + mili[3];
+            }
+        }
+        else
+        {
+            if (currentTime >= 1000)
+            {              
+
+                timeText.GetComponent<Text>().text = mili[0] + mili[1] + ":" + mili[3] + mili[4] + ":" + mili[6] + mili[7];
+
+
+            }
+            else
+            {
+                timeText.GetComponent<Text>().text = "0" + mili[0] + ":" + mili[1] + mili[2] + ":" + mili[4] + mili[5];
+            }
+        }
+
 
         if (!onTrain)
         {

@@ -14,8 +14,8 @@ public class WorldGrid : MonoBehaviour {
     public Mesh mesh;
     public Transform Train;
     public GameObject destinationText;
-    public Transform[] Station;
-    public Transform Track;
+    public Transform[] stationPrefabs;
+    public Transform trackObject;
     List<GameObject> tracks;
     private Vector3[] vertices;
     public Material material;
@@ -23,31 +23,22 @@ public class WorldGrid : MonoBehaviour {
     List<BezierSpline> splineScript;
     Player Player;
     public List<List<Vector3>> trainLines;
-    List<int> stationsOnLine;
     Color[] LineColour;
     public Station StartStation;
     public Station EndStation;
     GameObject[] minimapSphere;
     public Camera MainCamera;
 
-
-
-
-
-
     // Use this for initialization
     void Start ()
     {
         trainLines = new List<List<Vector3>>();
         stationList = new List<Station>();
-        stationsOnLine = new List<int>();
-        maxStationLines = FindMax();
-        StartStation = new Station();
-        EndStation = new Station();
         splineScript = new List<BezierSpline>();
         tracks = new List<GameObject>();
         Player = GameObject.Find("Player").GetComponent<Player>();
         minimapSphere = new GameObject[stationNum];
+        maxStationLines = FindMax();
 
         InitGrid();
         AssignStartEnd();
@@ -55,27 +46,21 @@ public class WorldGrid : MonoBehaviour {
         SetColour();
         PlaceLineBlocks();
         Player.Init();
-
-
     }
 
-
+    //find maximum lines a station can have
 	int FindMax()
     {
         int max = 0;
         max = Mathf.RoundToInt((lineNum * stationsPerLine) / stationNum);
         return max;
     }
-	// Update is called once per frame
-	void Update ()
-    {
 
-    }
-
+    //initliase and generate the world
     void InitGrid()
     {
-        trainGrid = new int[mapSize, mapSize];
-        PlaceStation();
+        InitTrainGrid();
+        PlaceStations();
         for (int i = 0; i < lineNum; i++)
         {
             trainLines.Add(MakeLine());
@@ -83,15 +68,11 @@ public class WorldGrid : MonoBehaviour {
         }
 
         CheckUnConnected();
-  
-
     }
 
-
-    void PlaceStation()
+    void InitTrainGrid()
     {
-        string seed = Time.time.ToString();
-
+        trainGrid = new int[mapSize, mapSize];
 
         for (int y = 0; y < mapSize; y++)
         {
@@ -100,68 +81,21 @@ public class WorldGrid : MonoBehaviour {
                 trainGrid[x, y] = 0;
             }
         }
+    }
 
+    void PlaceStations()
+    {
         for (int i = 0; i < stationNum; i++)
         {
             Station newStation = new Station();
-            GameObject stationObject = new GameObject("train");
-            GameObject stationText = new GameObject("text");
-            newStation.nameGenerator.Init();
-            System.Random pseudoRandom = new System.Random(seed.GetHashCode());
-
-            stationObject.AddComponent<MeshFilter>();
-            stationObject.AddComponent<MeshRenderer>();
-            stationObject.transform.parent = gameObject.transform;
-            stationText.AddComponent<MeshRenderer>();
-            stationText.AddComponent<TextMesh>();
-            stationText.transform.parent = stationObject.transform;
-
-            newStation.gridX = Random.Range(0, mapSize);
-            newStation.gridY = Random.Range(0, mapSize);
-            newStation.position = GridToPosition(newStation.gridX, newStation.gridY);
-            newStation.Generate();
-
-            for (int j = 0; j < stationList.Count; j++)
-            {
-                if (Vector3.Distance(newStation.position, stationList[j].position) < 5 )
-                {
-                    Debug.Log("1: " + Vector3.Distance(newStation.position, stationList[j].position));
-                    newStation.gridX = Random.Range(0, mapSize);
-                    newStation.gridY = Random.Range(0, mapSize);
-                    newStation.position = GridToPosition(newStation.gridX, newStation.gridY);
-                    j = 0;
-                    Debug.Log("2: " + Vector3.Distance(newStation.position, stationList[j].position));
-                }
-                if(newStation.stationName == stationList[j].stationName)
-                {
-                    newStation.Generate();
-                    j = 0;
-                }
-            }
-
-            
-            stationObject.transform.position = newStation.position; 
-            stationObject.name = newStation.stationName;
-
-            stationText.GetComponent<TextMesh>().text = stationObject.name;
-            stationText.GetComponent<TextMesh>().alignment = TextAlignment.Center;
-            stationText.GetComponent<TextMesh>().fontSize = 40;
-            stationText.transform.localScale = new Vector3(stationText.transform.localScale.x / 10, stationText.transform.localScale.y/10, stationText.transform.localScale.z / 10);
-            stationText.transform.localPosition = new Vector3(stationText.transform.localPosition.x - 1.44f, stationText.transform.localPosition.y + 1.9f, stationText.transform.localPosition.z - 0.41f);          
-            stationText.transform.Rotate(0, -50, 0);
-            stationText.tag = "StationText";
-
-            newStation.stationObject = stationObject;
             stationList.Add(newStation);
             trainGrid[newStation.gridX, newStation.gridY] = 1;
-
-            Instantiate(Station[Random.Range(0, 3)], stationObject.transform.position, Station[0].transform.rotation, stationObject.transform);
-
-        }
+            Instantiate(stationPrefabs[Random.Range(0, 3)], newStation.stationObject.transform.position, stationPrefabs[0].transform.rotation, newStation.stationObject.transform);
+        }   
     }
+
     List<Vector3> MakeLine()
-    {
-       
+    {     
         List<Vector3> newLine = new List<Vector3>();
         for (int i = 0; i < stationsPerLine-1; i++)
         {
@@ -222,7 +156,7 @@ public class WorldGrid : MonoBehaviour {
         GameObject track = new GameObject();
         track.name = "track";
         track.AddComponent<SplineDecorater>();
-        track.GetComponent<SplineDecorater>().frequency = 1500;
+        track.GetComponent<SplineDecorater>().frequency = 1000;
         track.GetComponent<SplineDecorater>().spline = splineScript[trainLines.Count - 1];
         track.GetComponent<SplineDecorater>().items = new Transform[1];
         track.layer = 9;
@@ -295,7 +229,7 @@ public class WorldGrid : MonoBehaviour {
     {
         StartStation = stationList[Random.Range(0, stationList.Count)];
         Vector3 currentPos = StartStation.position;
-        Station sMax = new Station();
+        Station sMax = null;
         float maxDist = 0;
 
 
@@ -315,55 +249,8 @@ public class WorldGrid : MonoBehaviour {
             }
         }
         Player.transform.position = currentPos + (Vector3.one / 2);
-        //MainCamera.transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, MainCamera.transform.position.z);
         EndStation = sMax;
         destinationText.GetComponent<Text>().text = EndStation.stationName;
-
-    }
-        
-    Vector3 GridToPosition(int x, int y)
-    {
-        return new Vector3(-mapSize / 2 + x + 0.5f, 0, -mapSize / 2 + y + 0.5f);
-    }
-
-
-
-    void OnDrawGizmos()
-    {
-        if (trainGrid != null)
-        {
-            //for (int y = 0; y < mapSize; y++)
-            //{
-            //    for (int x = 0; x < mapSize; x++)
-            //    {
-            //        if (trainGrid[x, y] == 1)
-            //        {
-            //            Gizmos.color = Color.red;
-            //        }
-            //        else
-            //        {
-            //            Gizmos.color = Color.black;
-            //        }
-            //        Gizmos.DrawCube(new Vector3(x, 3, y), Vector3.one);
-            //    }
-            //}
-            //if (trainLines != null)
-            //{
-            //    Gizmos.color = Color.green;
-            //    for (int l = 0; l < lineNum; l++)
-            //    {
-            //        Gizmos.color = LineColour[l];
-            //        for (int i = 0; i < stationsPerLine - 1; i++)
-            //        {
-
-            //            //Gizmos.DrawCube(new Vector3(trainLines[l][i].x, 3, trainLines[l][i].z), Vector3.one);
-            //            Gizmos.DrawLine(trainLines[l][i], trainLines[l][i + 1]);
-
-            //        }
-            //    }
-            //}
-        }
-      
 
     }
 
@@ -377,58 +264,17 @@ public class WorldGrid : MonoBehaviour {
 
     void PlaceLineBlocks()
     {
-        for (int i = 0; i < trainLines.Count; i++)
-        {
-
-            //    int offset = 0;
-            //    for (int k = 0; k < stationList.Count; k++)
-            //    {
-            //        if (trainLines[i].Contains(stationList[k].position))
-            //        {
-            //        GameObject miniMapobject = new GameObject();
-            //        miniMapobject.AddComponent<MeshFilter>();
-            //        miniMapobject.AddComponent<MeshRenderer>();
-            //        miniMapobject.GetComponent<MeshFilter>().mesh = mesh;
-            //        miniMapobject.layer = 8;
-
-            //        Renderer render = miniMapobject.GetComponent<Renderer>();
-            //        render.material.color = LineColour[i];
-
-            //        miniMapobject.transform.position = new Vector3(stationList[k].position.x + offset - stationList[k].linesConnected, 0 , stationList[k].position.z);
-            //        miniMapobject.transform.localScale.Set(15, 15, 15);
-
-
-            //        GameObject lineBlock = new GameObject();
-            //        lineBlock.AddComponent<MeshFilter>();
-            //        lineBlock.AddComponent<MeshRenderer>();
-            //        lineBlock.GetComponent<MeshFilter>().mesh = mesh;
-            //        lineBlock.transform.localScale.Set(0.3f, 0.3f, 0.3f);
-            //        Renderer rend = lineBlock.GetComponent<Renderer>();
-            //        rend.material.color = LineColour[i];
-
-            //        lineBlock.transform.position = new Vector3(stationList[k].position.x + offset - stationList[k].linesConnected, 3, stationList[k].position.z);
-            //        offset++;
-
-
-
-
-            //    }
-            //}
-       
-        }
+      
         for (int i = 0; i < tracks.Count; i++)
         {
-
             GameObject tTransfrom = new GameObject();
             tTransfrom.AddComponent<MeshFilter>();
             tTransfrom.AddComponent<MeshRenderer>();
             tTransfrom.GetComponent<MeshFilter>().mesh = mesh;
-            tTransfrom.transform.localScale = Track.localScale;
+            tTransfrom.transform.localScale = new Vector3(tTransfrom.transform.localScale.x / 10, tTransfrom.transform.localScale.y / 10, tTransfrom.transform.localScale.z / 10);
             tracks[i].layer = 9;
             tracks[i].GetComponent<SplineDecorater>().items[0] = tTransfrom.transform;
             tracks[i].GetComponent<SplineDecorater>().items[0].GetComponent<MeshRenderer>().material.color = LineColour[i];
-
-
 
             float emission = Mathf.PingPong(Time.time, 1.0f);
             Color baseColor = Color.yellow; //Replace this with whatever you want for your base color at emission level '1'

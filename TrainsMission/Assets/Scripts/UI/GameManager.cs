@@ -7,8 +7,9 @@ public class GameManager : MonoBehaviour {
     public UIManager UI;
     public GameObject pannle;
 
-    public void StartNewGame()
+    void Start()
     {
+        Time.timeScale = 1.0f;
     }
 
     public void TogglePauseMenu()

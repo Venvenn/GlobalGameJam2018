@@ -15,8 +15,9 @@ public class Player : MonoBehaviour
     bool onTrain;
     bool win = false;
     static bool record;
-    static float currentTime;
+
     static float bestTime = 0;
+    static float currentTime = 0.00f;
     int scoreTime;
     //hide win text
     private void Awake()
@@ -28,7 +29,6 @@ public class Player : MonoBehaviour
     void Start()
     {
         //reset time
-        currentTime = 0.0f;
         record = true;
         //init variables
         gridScript = GameObject.Find("TrainGrid").GetComponent<WorldGrid>();
@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        if (record)
+        //if (record)
         {
             currentTime += 1 * Time.deltaTime;
         }
@@ -138,7 +138,7 @@ public class Player : MonoBehaviour
                 {
                     
                     win = true;
-                    winText.GetComponent<Text>().text = "You Got Clarence to thier Stop in: " + Math.Round((double)currentTime,2) + " Seconds";
+                    winText.GetComponent<Text>().text = "You Got Clarence to their Stop in: " + Math.Round((double)currentTime,2) + " Seconds";
                     winText.SetActive(win);
                     StopRecord(true);
                 }

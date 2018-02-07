@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     GameObject trainOn;
     Light playerLight;
     public GameObject winText;
+    public GameObject winPanel;
     public GameObject timeText;
     bool onTrain;
     bool win = false;
@@ -23,23 +24,26 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         winText.SetActive(false);
+        winPanel.SetActive(false);
     }
 
     // Use this for initialization
     void Start()
     {
+
+
+    }
+    public void Init()
+    {
+
+        win = false;
         //reset time
+        currentTime = 0.01f;
         record = true;
         //init variables
         gridScript = GameObject.Find("TrainGrid").GetComponent<WorldGrid>();
         trainsList = new List<GameObject>();
         playerLight = transform.Find("PlayerSpotlight").GetComponent<Light>();
-
-    }
-    public void Init()
-    {
-        //turn on timer
-
 
         //fill train list with trains in scene
         for (int i = 0; i < GameObject.Find("Trains").transform.childCount; i++)
@@ -52,39 +56,41 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        //if (record)
+        if (record)
         {
             currentTime += 1 * Time.deltaTime;
-        }
 
+            string mili = currentTime.ToString();
 
-        string mili = currentTime.ToString();
-
-        if (currentTime < 100)
-        {
-            if (currentTime >= 10)
-            {           
-                timeText.GetComponent<Text>().text = "00:" + mili[0] + mili[1] + ":" + mili[3] + mili[4];
+            if (currentTime < 100)
+            {
+                if (currentTime >= 10)
+                {
+                    timeText.GetComponent<Text>().text = "00:" + mili[0] + mili[1] + ":" + mili[3] + mili[4];
+                }
+                else
+                {
+                    timeText.GetComponent<Text>().text = "00:" + "0" + mili[0] + ":" + mili[2] + mili[3];
+                }
             }
             else
             {
-                timeText.GetComponent<Text>().text = "00:" + "0" + mili[0] + ":" + mili[2] + mili[3];
+                if (currentTime >= 1000)
+                {
+
+                    timeText.GetComponent<Text>().text = mili[0] + mili[1] + ":" + mili[3] + mili[4] + ":" + mili[6] + mili[7];
+
+
+                }
+                else
+                {
+                    timeText.GetComponent<Text>().text = "0" + mili[0] + ":" + mili[1] + mili[2] + ":" + mili[4] + mili[5];
+                }
             }
         }
-        else
-        {
-            if (currentTime >= 1000)
-            {              
-
-                timeText.GetComponent<Text>().text = mili[0] + mili[1] + ":" + mili[3] + mili[4] + ":" + mili[6] + mili[7];
 
 
-            }
-            else
-            {
-                timeText.GetComponent<Text>().text = "0" + mili[0] + ":" + mili[1] + mili[2] + ":" + mili[4] + mili[5];
-            }
-        }
+        
 
 
         if (!onTrain)
@@ -139,6 +145,7 @@ public class Player : MonoBehaviour
                     
                     win = true;
                     winText.GetComponent<Text>().text = "You Got Clarence to their Stop in: " + Math.Round((double)currentTime,2) + " Seconds";
+                    winPanel.SetActive(win);
                     winText.SetActive(win);
                     StopRecord(true);
                 }

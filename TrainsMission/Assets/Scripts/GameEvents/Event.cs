@@ -8,6 +8,7 @@ public class Event
     int MTTH = 0;
     string name = "New Event";
     List<Condition> conditions;
+    string eventText = "An Event";
     bool fire = false;
     //constructors 
     public Event()
@@ -15,9 +16,10 @@ public class Event
 
     }
 
-    public Event(string e_name, int e_MTTH)
+    public Event(string e_name, string e_Text, int e_MTTH)
     {
         name = e_name;
+        eventText = e_Text;
         MTTH = e_MTTH;
     }
 
@@ -46,7 +48,6 @@ public class Event
 
 public class Condition
 {
-
     public bool Check()
     {
         return true;

@@ -172,9 +172,13 @@ public class WorldGrid : MonoBehaviour {
         for (int i = 1; i < trainLines[trainLines.Count - 1].Count; i++)
         {
             pointNum += 3;
-            splineScript[trainLines.Count - 1].SetControlPoint(pointNum, trainLines[trainLines.Count - 1][i]);
+            splineScript[trainLines.Count - 1].SetControlPoint(pointNum, trainLines[trainLines.Count - 1][i] + new Vector3(0.5f,0,-0.5f));
+            splineScript[trainLines.Count - 1].SetControlPoint(pointNum - 2, trainLines[trainLines.Count - 1][i] + Vector3.right*5);
+            //splineScript[trainLines.Count - 1].SetControlPoint(pointNum - 1, trainLines[trainLines.Count - 1][i]+ Vector3.left);
             splineScript[trainLines.Count - 1].AddCurve();
         }
+
+
 
         splineScript[trainLines.Count - 1].Loop = true;
 

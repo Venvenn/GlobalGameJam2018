@@ -82,6 +82,7 @@ f61c0793411f10cf5fbfa1473fef5ef2 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 1b8c02d0aa82fbf036a2b9b2d713eec3 UnityEngine.UI.dll:UnityEngine.UI.VerticalLayoutGroup
 1f04e5babf7c9610256f88582d16d72a Assembly-CSharp.dll:.BezierCurve
 cf67851761f45f5822ef6f31041a04d2 Assembly-CSharp.dll:.MenuDistortion
+94e048d86b2437a5a73f33d411a367e3 Assembly-CSharp.dll:.LevelData
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
 970a95104359198fe1a98ef48655de8c UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationTrack
 8144169769d51429c4aedc8b0f92d47b UnityEngine.Timeline.dll:UnityEngine.Timeline.AnimationPlayableAsset
@@ -119,6 +120,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.HighlightFix
 0fc732ee209acd32e2531928b9de394f Assembly-CSharp.dll:.TrainScript
 bd1f427d5b2f63ab8b6d3ad8409bbb63 Assembly-CSharp.dll:.SplineDecorater
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.EventManager
 4a99c0d276c80a8fb8bcb492a2371c40 Assembly-CSharp.dll:.WorldGrid
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
@@ -148,10 +150,10 @@ bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.Audi
 463516d5b5fe8e67a0a24c48f2095b04 UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInputModule
 c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingCollider
 45f3431f0103c41611e8d4eec3d439df UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
-c1ee3ee8d6470e203c9495e308938c3c Assembly-CSharp.dll:.UIManager
+649eb48564dbb292080da4a67bb0e410 Assembly-CSharp.dll:.UIManager
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.StartGameOnClick
-df51e16c003254b49ca7c6b35b1358f8 Assembly-CSharp.dll:.Player
+d88a6a45669f15edb95be74c6463bc63 Assembly-CSharp.dll:.Player
 b1206b72210fe9b2b33aff0af0feb8a6 Assembly-CSharp.dll:.CameraScript
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.ExitGameWhenClicked
 22d0936cb538dc6053295cc40731687c Assembly-CSharp.dll:.Line

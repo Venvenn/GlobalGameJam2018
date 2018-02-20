@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
-public class WorldGrid : MonoBehaviour {
+public class WorldGrid : MonoBehaviour
+{
 
     //objects inputed from editor
     public int mapSize = 50;
@@ -25,6 +26,7 @@ public class WorldGrid : MonoBehaviour {
     public Station EndStation;
 
     //local objects
+    LevelData levelData;
     List<GameObject> tracks;
     List<BezierSpline> splineScript;
     Player Player;
@@ -34,12 +36,18 @@ public class WorldGrid : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
+
+
+
+
         trainLines = new List<List<Vector3>>();
         stationList = new List<Station>();
         splineScript = new List<BezierSpline>();
         tracks = new List<GameObject>();
         Player = GameObject.Find("Player").GetComponent<Player>();
         minimapSphere = new GameObject[stationNum];
+        levelData = GameObject.Find("LevelManager").GetComponent<LevelData>();
+        LoadLevelData();
         maxStationLines = FindMax();
 
         // build and setup gameworld
@@ -51,11 +59,27 @@ public class WorldGrid : MonoBehaviour {
         Player.Init();
     }
 
+    void LoadLevelData()
+    {
+        mapSize = levelData.CurrentLevel.mapSize;
+        stationNum = levelData.CurrentLevel.stationNum;
+        lineNum = levelData.CurrentLevel.lineNum;
+        stationsPerLine = levelData.CurrentLevel.stationsPerLine;
+        stationPrefabs = levelData.CurrentLevel.stationPrefabs;
+    }
+
+
     //find maximum lines a station can have
 	int FindMax()
     {
         int max = 0;
         max = Mathf.RoundToInt((lineNum * stationsPerLine) / stationNum);
+
+        if(max <= 1)
+        {
+            max = 2;
+        }
+
         return max;
     }
 
@@ -64,6 +88,7 @@ public class WorldGrid : MonoBehaviour {
     {
         InitTrainGrid();
         PlaceStations();
+        Debug.Log(lineNum);
         for (int i = 0; i < lineNum; i++)
         {
             trainLines.Add(MakeLine());
@@ -95,7 +120,8 @@ public class WorldGrid : MonoBehaviour {
             Station newStation = new Station();
             stationList.Add(newStation);
             trainGrid[newStation.gridX, newStation.gridY] = 1;
-            Instantiate(stationPrefabs[Random.Range(0, 6)], newStation.stationObject.transform.position, stationPrefabs[0].transform.rotation, newStation.stationObject.transform);
+            int randomStation = Random.Range(0, stationPrefabs.Length);
+            Instantiate(stationPrefabs[randomStation], newStation.stationObject.transform.position, stationPrefabs[randomStation].transform.rotation, newStation.stationObject.transform);
         }   
     }
 

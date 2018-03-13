@@ -23,7 +23,7 @@ public class DistortionDistortion : MonoBehaviour
 
     void Move_Vertical()
     {
-        transform.position = new Vector3(transform.position.x, start_Position.y + Mathf.Sin(Time.time * max_Speed) * 15, transform.position.z);
+        transform.position = new Vector3(transform.position.x, start_Position.y + Mathf.Sin(Time.time * max_Speed) * 10, transform.position.z);
 
         if (transform.position.y > -1.0f)
         {

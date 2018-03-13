@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ public class WorldGrid : MonoBehaviour
     //local objects
     LevelData levelData;
     List<GameObject> tracks;
-    List<BezierSpline> splineScript;
+    //List<BezierSpline> splineScript;
     Player Player;
     Color[] LineColour;
     GameObject[] minimapSphere;
@@ -36,13 +37,9 @@ public class WorldGrid : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-
-
-
-
         trainLines = new List<List<Vector3>>();
         stationList = new List<Station>();
-        splineScript = new List<BezierSpline>();
+        //splineScript = new List<BezierSpline>();
         tracks = new List<GameObject>();
         Player = GameObject.Find("Player").GetComponent<Player>();
         minimapSphere = new GameObject[stationNum];
@@ -157,56 +154,61 @@ public class WorldGrid : MonoBehaviour
     // create trains and tracks to travel lines
     void AssignSplines()
     {
-        //init new spline
-        GameObject splineLine = new GameObject();
-        splineLine.AddComponent<BezierSpline>();
-        splineLine.name = trainLines.Count.ToString();
-        splineLine.transform.parent = GameObject.Find("SplineLines").transform;
-        splineScript.Add(splineLine.GetComponent<BezierSpline>());
-        splineScript[trainLines.Count-1].Reset();
+        ////init new spline
+        //GameObject splineLine = new GameObject();
+        //splineLine.AddComponent<BezierSpline>();
+        //splineLine.AddComponent<PathCreator>();
+        //splineLine.AddComponent<RailPlacer>();
+        //splineLine.name = trainLines.Count.ToString();
+        //splineLine.transform.parent = GameObject.Find("SplineLines").transform;
+        //splineScript.Add(splineLine.GetComponent<BezierSpline>());
+        //splineScript[trainLines.Count-1].Reset();
 
-        //init train
-        GameObject train = new GameObject();
-        train.name = "train";
-        train.transform.parent = GameObject.Find("Trains").transform;
-        train.AddComponent<MeshFilter>();
-        train.AddComponent<MeshRenderer>();
-        train.AddComponent<TrainScript>();
-        train.GetComponent<TrainScript>().line = trainLines.Count - 1;
-        Instantiate(Train, new Vector3 (transform.position.x, 0.35f, transform.position.x), transform.rotation, train.transform);
+        ////init train
+        //GameObject train = new GameObject();
+        //train.name = "train";
+        //train.transform.parent = GameObject.Find("Trains").transform;
+        //train.AddComponent<MeshFilter>();
+        //train.AddComponent<MeshRenderer>();
+        //train.AddComponent<TrainScript>();
+        //train.GetComponent<TrainScript>().line = trainLines.Count - 1;
+        //Instantiate(Train, new Vector3 (transform.position.x, 0.35f, transform.position.x), transform.rotation, train.transform);
 
-        train.AddComponent<SplineWalker>();
-        train.GetComponent<SplineWalker>().spline = splineScript[trainLines.Count - 1];
-        train.GetComponent<SplineWalker>().duration = 30;
-        train.GetComponent<SplineWalker>().lookForward = true;
-        train.GetComponent<SplineWalker>().mode = SplineWalker.SplineWalkerMode.Loop;
-        train.tag = "train";
+        //train.AddComponent<SplineWalker>();
+        //train.GetComponent<SplineWalker>().spline = splineScript[trainLines.Count - 1];
+        //train.GetComponent<SplineWalker>().duration = 30;
+        //train.GetComponent<SplineWalker>().lookForward = true;
+        //train.GetComponent<SplineWalker>().mode = SplineWalker.SplineWalkerMode.Loop;
+        //train.tag = "train";
 
-        //init track objects
-        GameObject track = new GameObject();
-        track.name = "track";
-        track.AddComponent<SplineDecorater>();
-        track.GetComponent<SplineDecorater>().frequency = 1000;
-        track.GetComponent<SplineDecorater>().spline = splineScript[trainLines.Count - 1];
-        track.GetComponent<SplineDecorater>().items = new Transform[1];
-        track.layer = 9;
-        tracks.Add(track);
+        ////init track objects
+        //GameObject track = new GameObject();
+        //track.name = "track";
+        //track.AddComponent<SplineDecorater>();
+        //track.GetComponent<SplineDecorater>().frequency = 1000;
+        //track.GetComponent<SplineDecorater>().spline = splineScript[trainLines.Count - 1];
+        //track.GetComponent<SplineDecorater>().items = new Transform[1];
+        //track.layer = 9;
+        //tracks.Add(track);
 
-        //place splines at correct station positions
-        int pointNum = 0;
-        splineScript[trainLines.Count - 1].SetControlPoint(pointNum, trainLines[trainLines.Count - 1][0]);
-        for (int i = 1; i < trainLines[trainLines.Count - 1].Count; i++)
-        {
-            pointNum += 3;
-            splineScript[trainLines.Count - 1].SetControlPoint(pointNum, trainLines[trainLines.Count - 1][i] + new Vector3(0.5f,0,-0.5f));
-            splineScript[trainLines.Count - 1].SetControlPoint(pointNum - 2, trainLines[trainLines.Count - 1][i] + Vector3.right*5);
-            //splineScript[trainLines.Count - 1].SetControlPoint(pointNum - 1, trainLines[trainLines.Count - 1][i]+ Vector3.left);
-            splineScript[trainLines.Count - 1].AddCurve();
-        }
+        ////place splines at correct station positions
+        //int pointNum = 0;
+        //splineScript[trainLines.Count - 1].SetControlPoint(pointNum, trainLines[trainLines.Count - 1][0]);
+        //for (int i = 1; i < trainLines[trainLines.Count - 1].Count; i++)
+        //{
+        //    pointNum += 3;
+        //    splineScript[trainLines.Count - 1].SetControlPoint(pointNum, trainLines[trainLines.Count - 1][i] + new Vector3(0.5f,0,-0.5f));
+        //    //splineLine.GetComponent<PathCreator>().path.MovePoint(pointNum, new Vector2(trainLines[trainLines.Count - 1][i].x, trainLines[trainLines.Count - 1][i].y));
+        //    splineScript[trainLines.Count - 1].SetControlPoint(pointNum - 2, trainLines[trainLines.Count - 1][i] + Vector3.right*5);
+        //    //splineScript[trainLines.Count - 1].SetControlPoint(pointNum - 1, trainLines[trainLines.Count - 1][i]+ Vector3.left);
+        //    splineScript[trainLines.Count - 1].AddCurve();
+        //}
 
 
 
-        splineScript[trainLines.Count - 1].Loop = true;
+        ////splineLine.GetComponent<RailPlacer>().UpdateRail();
+
+        //splineScript[trainLines.Count - 1].Loop = true;
 
     }
     //check to see if any stations do not have lines and add a new line
@@ -278,16 +280,24 @@ public class WorldGrid : MonoBehaviour
                     float dist = Vector3.Distance(s.stationObject.transform.position, currentPos);
                     if (dist > maxDist)
                     {
+                        Debug.Log(s.stationName);
                         sMax = s;
                         maxDist = dist;
                     }
                 }
             }
         }
-        Player.transform.position = currentPos + (Vector3.one / 2);
-        EndStation = sMax;
-        destinationText.GetComponent<Text>().text = EndStation.stationName;
-
+        if(sMax != null)
+        {
+            Player.transform.position = currentPos + (Vector3.one / 2);
+            EndStation = sMax;
+            //Debug.Log(sMax.stationName);
+            destinationText.GetComponent<Text>().text = EndStation.stationName;
+        }
+        else
+        {
+            SceneManager.LoadScene(2);
+        }
     }
 
     //randomly pick a colour for each line
@@ -311,13 +321,13 @@ public class WorldGrid : MonoBehaviour
             tTransfrom.GetComponent<MeshFilter>().mesh = mesh;
             tTransfrom.transform.localScale = new Vector3(tTransfrom.transform.localScale.x / 10, tTransfrom.transform.localScale.y / 10, tTransfrom.transform.localScale.z / 10);
             tracks[i].layer = 9;
-            tracks[i].GetComponent<SplineDecorater>().items[0] = tTransfrom.transform;
-            tracks[i].GetComponent<SplineDecorater>().items[0].GetComponent<MeshRenderer>().material.color = LineColour[i];
+            //tracks[i].GetComponent<SplineDecorater>().items[0] = tTransfrom.transform;
+            //tracks[i].GetComponent<SplineDecorater>().items[0].GetComponent<MeshRenderer>().material.color = LineColour[i];
 
-            float emission = Mathf.PingPong(Time.time, 1.0f);
-            Color finalColor =LineColour[i] * Mathf.LinearToGammaSpace(emission);
+            //float emission = Mathf.PingPong(Time.time, 1.0f);
+            //Color finalColor =LineColour[i] * Mathf.LinearToGammaSpace(emission);
 
-            tracks[i].GetComponent<SplineDecorater>().items[0].GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", finalColor);
+            //tracks[i].GetComponent<SplineDecorater>().items[0].GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", finalColor);
         }
     }
 

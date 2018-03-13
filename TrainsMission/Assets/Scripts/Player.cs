@@ -95,7 +95,7 @@ public class Player : MonoBehaviour
 
         if (!onTrain)
         {
-            if (Input.GetKeyDown("space"))
+            if (Input.GetKeyDown("space") || Input.GetMouseButtonDown(0))
             {
 
                 Debug.Log(trainsList.Count);
@@ -104,7 +104,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            if (Input.GetKeyDown("space"))
+            if (Input.GetKeyDown("space") || Input.GetMouseButtonDown(0))
             {
 
                 Debug.Log(trainsList.Count);

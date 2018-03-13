@@ -22,7 +22,7 @@ public class MenuDistortion : MonoBehaviour {
 
     void MoveVertical()
     {
-        transform.position = new Vector3(transform.position.x, startPosition.y + Mathf.Sin(Time.time * maxSpeed)*0.15f, transform.position.z);
+        transform.position = new Vector3(transform.position.x, startPosition.y + Mathf.Sin(Time.time * maxSpeed)*10f, transform.position.z);
 
         if (transform.position.y > 1.0f)
         {
